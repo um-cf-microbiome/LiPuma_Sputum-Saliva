@@ -1,0 +1,517 @@
+#R code for Figures and Analyses
+install.packages("stringi",dep=TRUE)
+library(ggplot2)
+library(scales)
+library(lme4)
+library(lmerTest)
+library(vegan)
+library(grid)
+library(zoo)
+library(reshape2)
+library(reshape)
+library(dplyr)
+library(rgl)
+library(ggpubr)
+library(gridExtra)
+library(MASS) 
+library(spaa)
+library(lme4)
+library(lmerTest)
+require("ggrepel")
+
+
+##Bacterial Load
+
+###Figure 1A
+par(mar = c(5, 7, 5, 2), xpd=TRUE)
+a <- read.csv(file="ddPCR.csv",header=T)
+####Load is 16S copies/ml sample, calculated as (ColH*100*(685/400)*(695/650)*(1000/175))
+####Treatment 1=on antibiotic treatment, 2=off antibiotic treatment
+a$SpecimenType <- factor(a$SpecimenType, levels = c("Sputum", "Saliva"))
+p <- ggplot(a, aes(x = SpecimenType, y = Load)) +
+     theme(axis.text = element_text(size=28, color="black"), axis.title=element_text(size=30), legend.position="none") +
+     scale_y_continuous(breaks = seq(0,10000000000, 2000000000), limits=c(0,10200000010), expand=expand_scale(mult = c(0.01,0.02)), label= function(x) {ifelse(x==0, "0", parse(text=gsub("[+]", "", gsub("e", " %*% 10^", scientific_format()(x)))))}) +
+     stat_boxplot(geom = 'errorbar', width=0.2) +      
+     geom_boxplot(fill = "white", outlier.shape=21, outlier.size=2.5) +
+     xlab("Specimen Type") +
+     ylab("Bacterial Load (16S copies/ml)")
+p + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+panel.background = element_rect(fill = "white", color = "black", size = 1, linetype = "solid"))
+
+
+##Figure 1B
+b <- read.csv(file="Figure1B.csv",header=T)
+b$SubjectSample <- factor(b$SubjectSample, c("10c",	"10b",	"10a",	"9c",	"9b",	"9a",	"8c",	"8b",	"8a",	"7b",	"7a",	"6",	"5e",	"5d",	"5c",	"5b",	"5a",	"4e",	"4d",	"4c",	"4b",	"4a",	"3e",	"3d",	"3c",	"3b",	"3a",	"2e",	"2d",	"2c",	"2b",	"2a",	"1e",	"1d",	"1c",	"1b",	"1a", "1f"))
+par(xpd=TRUE)
+ggplot(data=b, aes(x=SubjectSample,y=SputumSalivaRatio-1,fill=factor(SalivaIsHigher))) +
+    geom_bar(position="dodge",stat="identity", show.legend = FALSE) + 
+    coord_flip() +
+    scale_y_continuous(labels = function(y) y + 1) +
+    theme_minimal() +
+    theme(axis.text.y=element_blank(), panel.grid.major.y = element_blank(),   
+          axis.text=element_text(size=15), axis.title.x = element_text(size = 25), axis.title.y = 
+              element_text(size = 25), plot.margin=margin(t = 25, r = 5, b = 20, l = 10)) +
+    ylab("(log10 Sputum Load) / (log10 Saliva Load)") +
+    xlab("Subject") +     
+    geom_segment(aes(x=3.5, y=-0.4, xend=3.5, yend=.65), size=0.1) +       
+    geom_segment(aes(x=6.5, y=-0.4, xend=6.5, yend=.65), size=0.02) +     
+    geom_segment(aes(x=9.5, y=-0.4, xend=9.5, yend=.65), size=0.1) +       
+    geom_segment(aes(x=11.5, y=-0.4, xend=11.5, yend=.65), size=0.1) +
+    geom_segment(aes(x=12.5, y=-0.4, xend=12.5, yend=.65), size=0.05) +
+    geom_segment(aes(x=17.5, y=-0.4, xend=17.5, yend=.65), size=0.1) +
+    geom_segment(aes(x=22.5, y=-0.4, xend=22.5, yend=.65), size=0.05) +
+    geom_segment(aes(x=27.5, y=-0.4, xend=27.5, yend=.65), size=0.1) +
+    geom_segment(aes(x=32.5, y=-0.4, xend=32.5, yend=.65), size=0.05) +
+    annotate("text", x=1.75, y=-0.42, size = 7, label="10") +
+    annotate("text", x=5, y=-0.42, size = 7, label="9") +
+    annotate("text", x=8, y=-0.42, size = 7, label="8") +
+    annotate("text", x=10.5, y=-0.42, size = 7, label="7") +
+    annotate("text", x=12, y=-0.42, size = 7, label="6") +
+    annotate("text", x=15, y=-0.42, size = 7, label="5") +
+    annotate("text", x=20, y=-0.42, size = 7, label="4") +
+    annotate("text", x=25, y=-0.42, size = 7, label="3") +
+    annotate("text", x=30, y=-0.42, size = 7, label="2") +
+    annotate("text", x=35, y=-0.42, size = 7, label="1") + 
+    annotate("text", x=38, y=-0.2, size=5, label="(Higher Load in Saliva)") +
+    annotate("text", x=38, y=0.3, size=5, label="(Higher Load in Sputum)") +
+    annotate("text", x=33, y=-0.05, size=5, label="T") +
+    annotate("text", x=30, y=0.115, size=5, label="T") +
+    annotate("text", x=29, y=0.04, size=5, label="T") +
+    annotate("text", x=25, y=-0.05, size=5, label="T") +
+    annotate("text", x=20, y=0.62, size=5, label="T") +
+    annotate("text", x=5, y=0.34, size=5, label="T")
+
+
+##Figure 1C
+par(mar = c(5, 7, 5, 2), xpd=TRUE)
+a$StageGroup <- factor(a$StageGroup, levels = c("1","2"))
+p <- ggplot(a, aes(x = StageGroup, y = Load)) +
+     theme(axis.text = element_text(size=28, color="black"), axis.title=element_text(size=30), legend.position="none") +
+     scale_y_continuous(breaks = seq(0,10000000000, 2000000000), limits=c(0,10200000010), expand=expand_scale(mult = c(0.01,0.02)), label= function(x) {ifelse(x==0, "0", parse(text=gsub("[+]", "", gsub("e", " %*% 10^", scientific_format()(x)))))}) +
+     stat_boxplot(geom = 'errorbar', width=0.2) +      
+     geom_boxplot(fill = "white", outlier.shape=21, outlier.size=2.5) +
+     xlab("\nDisease Stage Group") +
+     ylab("Bacterial Load (16S copies/ml)") +
+      scale_x_discrete(labels=c("Early + Early/Int","Int + Int/Adv + Adv"))
+p + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+panel.background = element_rect(fill = "white", color = "black", size = 1, linetype = "solid"))
+
+
+##Bacterial Load Linear Mixed Model
+lmm <- lmer(LogLoad ~ StageGroup + Treatment + SpecimenType + Treatment:SpecimenType + (1|Subject), data = a)
+anova(lmm)
+
+#Richness
+##Figure 2A
+par(mar = c(5, 7, 5, 2), xpd=TRUE)
+c <-read.csv(file="Richness.csv",header=T)
+c$SpecimenType <- factor(c$SpecimenType, levels=c("Sputum", "Saliva"))
+boxplot(data=c, Richness~SpecimenType, xlab="Specimen Type", ylab="Richness (number of OTUs)", names = c("Sputum","Saliva"), cex.axis=2, cex.lab=2.75, whisklty=1) 
+
+
+##Figure 2B
+d <- read.csv(file="Figure2B.csv",header=T)
+d$SubjectSample <- factor(d$SubjectSample, c("10c",	"10b",	"10a",	"9c",	"9b",	"9a",	"8c",	"8b",	"8a",	"7b",	"7a",	"6",	"5e",	"5d",	"5c",	"5b",	"5a",	"4e",	"4d",	"4c",	"4b",	"4a",	"3e",	"3d",	"3c",	"3b",	"3a",	"2e",	"2d",	"2c",	"2b",	"2a",	"1e",	"1d",	"1c",	"1b",	"1a", "1f"))
+par(xpd=TRUE)
+ggplot(data=d, aes(x=SubjectSample,y=SputumSalivaDifference,fill=factor(SalivaIsHigher))) +
+    geom_bar(position="dodge",stat="identity", show.legend = FALSE) + 
+    coord_flip() +
+    theme_minimal() +
+    theme(axis.text.y=element_blank(), panel.grid.major.y = element_blank(),   
+          axis.text=element_text(size=15), axis.title.x = element_text(size = 25), axis.title.y = 
+              element_text(size = 25), plot.margin=margin(t = 25, r = 5, b = 20, l = 10)) +
+    ylab("(Sputum Richness) – (Saliva Richness)") +
+    xlab("Subject") +     
+    ylim(-41, 20) +
+    geom_segment(aes(x=3.5, y=-39.5, xend=3.5, yend=19.5), size=0.1) +       
+    geom_segment(aes(x=6.5, y=-39.5, xend=6.5, yend=19.5), size=0.02) +     
+    geom_segment(aes(x=9.5, y=-39.5, xend=9.5, yend=19.5), size=0.1) +       
+    geom_segment(aes(x=11.5, y=-39.5, xend=11.5, yend=19.5), size=0.1) +
+    geom_segment(aes(x=12.5, y=-39.5, xend=12.5, yend=19.5), size=0.1) +
+    geom_segment(aes(x=17.5, y=-39.5, xend=17.5, yend=19.5), size=0.1) +
+    geom_segment(aes(x=22.5, y=-39.5, xend=22.5, yend=19.5), size=0.01) +
+    geom_segment(aes(x=27.5, y=-39.5, xend=27.5, yend=19.5), size=0.1) +
+    geom_segment(aes(x=32.5, y=-39.5, xend=32.5, yend=19.5), size=0.1) +
+    annotate("text", x=1.75, y=-41, size = 7, label="10") +
+    annotate("text", x=5, y=-41, size = 7, label="9") +
+    annotate("text", x=8, y=-41, size = 7, label="8") +
+    annotate("text", x=10.5, y=-41, size = 7, label="7") +
+    annotate("text", x=12, y=-41, size = 7, label="6") +
+    annotate("text", x=15, y=-41, size = 7, label="5") +
+    annotate("text", x=20, y=-41, size = 7, label="4") +
+    annotate("text", x=25, y=-41, size = 7, label="3") +
+    annotate("text", x=30, y=-41, size = 7, label="2") +
+    annotate("text", x=35, y=-41, size = 7, label="1") + 
+    annotate("text", x=38, y=-25, size=5, label="(Excess Taxa in Saliva)") +
+    annotate("text", x=38, y=10, size=5, label="(Excess Taxa in Sputum)") +
+    annotate("text", x=33, y=5, size=5, label="T") +
+    annotate("text", x=30, y=2, size=5, label="T") +
+    annotate("text", x=29, y=-13, size=5, label="T") +
+    annotate("text", x=25, y=-18, size=5, label="T") +
+    annotate("text", x=20, y=5, size=5, label="T") +
+    annotate("text", x=5, y=-29, size=5, label="T") +
+    annotate("text", x=21.1, y=0, size=7, label="|", fontface="bold") +
+    annotate("text", x=4.1, y=0, size=7, label="|", fontface="bold")
+
+
+##Figure 2C
+par(mar = c(5, 5, 5, 2), xpd=TRUE)
+boxplot(data=c, Richness~StageGroup, xlab="Disease Stage Group", ylab="Richness (number of OTUs)", names = c("Early + Early/Int","Int + Int/Adv + Adv"), cex.axis=2, cex.lab=2.75, whisklty=1) 
+
+
+##Richness Linear Mixed Model
+lmm <- lmer(Richness ~ StageGroup + Treatment + SpecimenType + (1|Subject), data = c)
+anova(lmm)
+
+
+#Community Structure
+
+##Figure 3
+col<-c("grey","#A52A2A", "#f9dcac","#89CFF0","#FFAA1D","#FFFF00","#006A4E","#873260","#536872","#B5A642","#CB4154","#1DACD6","#66FF00","#BF94E4","#F4C2C2","#009E73","#CD7F32","#737000","#007FFF","#E7FEFF","#7BB661","#F0DC82","#CC5500","#FFC1CC","#5F9EA0","#ED872D","#702963","#FFF600","#A67B5B","#4B3621","#A3C1AD","#A9A9A9","#3B7A57","#FFBF00","#A52A2A","#B284BE","#0048BA")
+dts1<-read.table("RelativeAbundance>1%.shared",header=T,sep="\t")
+dts<-dts1[c(1:10),]#Subject1
+minsub1<-melt(dts,id.vars = c("Sample","Group","Type"))
+colnames(minsub1)[4] <- "Taxa"
+minsub1$Type = factor(minsub1$Type, levels=c("Sputum","Saliva"),labels=c("Sputum","Saliva")) 
+p1<-ggplot() + geom_bar(data = minsub1,aes(x=Type,y=value, fill=Taxa),width=0.88,stat = "identity") + 
+  scale_fill_manual(values = col,guide = guide_legend(reverse = TRUE))+
+  labs(x="",y="Relative abundance")+facet_grid(~ Group)+
+  theme(legend.position="none", panel.spacing = unit(1.3, "lines"),strip.background =element_blank(),strip.text.x = element_text(size = 45),axis.title.y = element_text(margin = margin(t = 0, r = 25, b = 0, l = 0)),title = element_text(size = rel(4.8)),axis.text.y = element_text(size=45),axis.text.x = element_text(angle=60,size=45,hjust=1,vjust=1),panel.background = element_blank(),axis.line = element_line(colour = "gray"))
+dts<-dts1[c(11:20),]#Subject2
+minsub1<-melt(dts,id.vars = c("Sample","Group","Type"))
+colnames(minsub1)[4] <- "Taxa"
+minsub1$Type = factor(minsub1$Type, levels=c("Sputum","Saliva"),labels=c("Sputum","Saliva")) 
+p2<-ggplot() + geom_bar(data = minsub1,aes(x=Type,y=value, fill=Taxa),width=0.88,stat = "identity") + 
+  scale_fill_manual(values = col,guide = guide_legend(reverse = TRUE))+
+  labs(x="",y="Relative abundance")+facet_grid(~ Group)+
+  theme(legend.position="none", panel.spacing = unit(1.3, "lines"),strip.background =element_blank(),strip.text.x = element_text(size = 45),axis.title.y = element_text(margin = margin(t = 0, r = 25, b = 0, l = 0)),title = element_text(size = rel(4.8)),axis.text.y = element_text(size=45),axis.text.x = element_text(angle=60,size=45,hjust=1,vjust=1),panel.background = element_blank(),axis.line = element_line(colour = "gray"))
+dts<-dts1[c(21:30),]#Subject3
+minsub1<-melt(dts,id.vars = c("Sample","Group","Type"))
+colnames(minsub1)[4] <- "Taxa"
+minsub1$Type = factor(minsub1$Type, levels=c("Sputum","Saliva"),labels=c("Sputum","Saliva")) 
+p3<-ggplot() + geom_bar(data = minsub1,aes(x=Type,y=value, fill=Taxa),width=0.88,stat = "identity") + 
+  scale_fill_manual(values = col,guide = guide_legend(reverse = TRUE))+
+  labs(x="",y="Relative abundance")+facet_grid(~ Group)+
+  theme(legend.position="none", panel.spacing = unit(1.3, "lines"),strip.background =element_blank(),strip.text.x = element_text(size = 45),axis.title.y = element_text(margin = margin(t = 0, r = 25, b = 0, l = 0)),title = element_text(size = rel(4.8)),axis.text.y = element_text(size=45),axis.text.x = element_text(angle=60,size=45,hjust=1,vjust=1),panel.background = element_blank(),axis.line = element_line(colour = "gray"))
+dts<-dts1[c(31:40),]#Subject4
+minsub1<-melt(dts,id.vars = c("Sample","Group","Type"))
+colnames(minsub1)[4] <- "Taxa"
+minsub1$Type = factor(minsub1$Type, levels=c("Sputum","Saliva"),labels=c("Sputum","Saliva")) 
+p4<-ggplot() + geom_bar(data = minsub1,aes(x=Type,y=value, fill=Taxa),width=0.88,stat = "identity") + 
+  scale_fill_manual(values = col,guide = guide_legend(reverse = TRUE))+
+  labs(x="",y="Relative abundance")+facet_grid(~ Group)+
+  theme(legend.position="none", panel.spacing = unit(1.3, "lines"),strip.background =element_blank(),strip.text.x = element_text(size = 45),axis.title.y = element_text(margin = margin(t = 0, r = 25, b = 0, l = 0)),title = element_text(size = rel(4.8)),axis.text.y = element_text(size=45),axis.text.x = element_text(angle=60,size=45,hjust=1,vjust=1),panel.background = element_blank(),axis.line = element_line(colour = "gray"))
+dts<-dts1[c(41:50),]#Subject5
+minsub1<-melt(dts,id.vars = c("Sample","Group","Type"))
+colnames(minsub1)[4] <- "Taxa"
+minsub1$Type = factor(minsub1$Type, levels=c("Sputum","Saliva"),labels=c("Sputum","Saliva")) 
+p5<-ggplot() + geom_bar(data = minsub1,aes(x=Type,y=value, fill=Taxa),width=0.88,stat = "identity") + 
+  scale_fill_manual(values = col,guide = guide_legend(reverse = TRUE))+
+  labs(x="",y="Relative abundance")+facet_grid(~ Group)+
+  theme(legend.position="none", panel.spacing = unit(1.3, "lines"),strip.background =element_blank(),strip.text.x = element_text(size = 45),axis.title.y = element_text(margin = margin(t = 0, r = 25, b = 0, l = 0)),title = element_text(size = rel(4.8)),axis.text.y = element_text(size=45),axis.text.x = element_text(angle=60,size=45,hjust=1,vjust=1),panel.background = element_blank(),axis.line = element_line(colour = "gray"))
+dts<-dts1[c(51:52),]#Subject6
+minsub1<-melt(dts,id.vars = c("Sample","Group","Type"))
+colnames(minsub1)[4] <- "Taxa"
+minsub1$Type = factor(minsub1$Type, levels=c("Sputum","Saliva"),labels=c("Sputum","Saliva")) 
+p6<-ggplot() + geom_bar(data = minsub1,aes(x=Type,y=value, fill=Taxa),width=0.88,stat = "identity") + 
+  scale_fill_manual(values = col,guide = guide_legend(reverse = TRUE))+
+  labs(x="",y="Relative abundance")+facet_grid(~ Group)+
+  theme(legend.position="none", panel.spacing = unit(1.3, "lines"),strip.background =element_blank(),strip.text.x = element_text(size = 45),axis.title.y = element_text(margin = margin(t = 0, r = 25, b = 0, l = 0)),title = element_text(size = rel(4.8)),axis.text.y = element_text(size=45),axis.text.x = element_text(angle=60,size=45,hjust=1,vjust=1),panel.background = element_blank(),axis.line = element_line(colour = "gray"))
+dts<-dts1[c(53:56),]#Subject7
+minsub1<-melt(dts,id.vars = c("Sample","Group","Type"))
+colnames(minsub1)[4] <- "Taxa"
+minsub1$Type = factor(minsub1$Type, levels=c("Sputum","Saliva"),labels=c("Sputum","Saliva")) 
+p7<-ggplot() + geom_bar(data = minsub1,aes(x=Type,y=value, fill=Taxa),width=0.88,stat = "identity") + 
+  scale_fill_manual(values = col,guide = guide_legend(reverse = TRUE))+
+  labs(x="",y="Relative abundance")+facet_grid(~ Group)+
+  theme(legend.position="none", panel.spacing = unit(1.3, "lines"),strip.background =element_blank(),strip.text.x = element_text(size = 45),axis.title.y = element_text(margin = margin(t = 0, r = 25, b = 0, l = 0)),title = element_text(size = rel(4.8)),axis.text.y = element_text(size=45),axis.text.x = element_text(angle=60,size=45,hjust=1,vjust=1),panel.background = element_blank(),axis.line = element_line(colour = "gray"))
+dts<-dts1[c(57:62),]#Subject8
+minsub1<-melt(dts,id.vars = c("Sample","Group","Type"))
+colnames(minsub1)[4] <- "Taxa"
+minsub1$Type = factor(minsub1$Type, levels=c("Sputum","Saliva"),labels=c("Sputum","Saliva")) 
+p8<-ggplot() + geom_bar(data = minsub1,aes(x=Type,y=value, fill=Taxa),width=0.88,stat = "identity") + 
+  scale_fill_manual(values = col,guide = guide_legend(reverse = TRUE))+
+  labs(x="",y="Relative abundance")+facet_grid(~ Group)+
+  theme(legend.position="none", panel.spacing = unit(1.3, "lines"),strip.background =element_blank(),strip.text.x = element_text(size = 45),axis.title.y = element_text(margin = margin(t = 0, r = 25, b = 0, l = 0)),title = element_text(size = rel(4.8)),axis.text.y = element_text(size=45),axis.text.x = element_text(angle=60,size=45,hjust=1,vjust=1),panel.background = element_blank(),axis.line = element_line(colour = "gray"))
+dts<-dts1[c(63:68),]#subject9
+minsub1<-melt(dts,id.vars = c("Sample","Group","Type"))
+colnames(minsub1)[4] <- "Taxa"
+minsub1$Type = factor(minsub1$Type, levels=c("Sputum","Saliva"),labels=c("Sputum","Saliva")) 
+p9<-ggplot() + geom_bar(data = minsub1,aes(x=Type,y=value, fill=Taxa),width=0.88,stat = "identity") + 
+  scale_fill_manual(values = col,guide = guide_legend(reverse = TRUE))+
+  labs(x="",y="Relative abundance")+facet_grid(~ Group)+
+  theme(legend.position="none", panel.spacing = unit(1.3, "lines"),strip.background =element_blank(),strip.text.x = element_text(size = 45),axis.title.y = element_text(margin = margin(t = 0, r = 25, b = 0, l = 0)),title = element_text(size = rel(4.8)),axis.text.y = element_text(size=45),axis.text.x = element_text(angle=60,size=45,hjust=1,vjust=1),panel.background = element_blank(),axis.line = element_line(colour = "gray"))
+dts<-dts1[c(69:74),]#subject10
+minsub1<-melt(dts,id.vars = c("Sample","Group","Type"))
+colnames(minsub1)[4] <- "Taxa"
+minsub1$Type = factor(minsub1$Type, levels=c("Sputum","Saliva"),labels=c("Sputum","Saliva")) 
+p10<-ggplot() + geom_bar(data = minsub1,aes(x=Type,y=value, fill=Taxa),width=0.88,stat = "identity") + 
+  scale_fill_manual(values = col,guide = guide_legend(reverse = TRUE))+
+  labs(x="",y="Relative abundance")+facet_grid(~ Group)+
+  theme(panel.spacing = unit(1.3, "lines"),strip.background =element_blank(),strip.text.x = element_text(size = 45),axis.title.y = element_text(margin = margin(t = 0, r = 25, b = 0, l = 0)),title = element_text(size = rel(4.8)),axis.text.y = element_text(size=45),axis.text.x = element_text(angle=60,size=45,hjust=1,vjust=1),panel.background = element_blank(),axis.line = element_line(colour = "gray"), legend.text = element_text(size = 30))
+p1
+p2
+p3
+p4
+p5
+p6
+p7
+p8
+p9
+p10
+
+
+##Figure 4A
+par(mar = c(7, 5, 5, 2))
+e <- read.csv(file="BetaDiversity.csv",header=T)
+boxplot(data=e, TYC_Similarity~StageGroup, xlab="Disease Stage Group", ylab="Theta-YC Similarity Sputum-Saliva", xaxt="n", cex.axis=1.5, cex.lab=2.5, whisklty=1) 
+axis(side = 1,at = 1:2,labels=c("Early + Early/Int (n=15)","Int + Int/Adv + Adv (n=22)"), lwd.ticks = FALSE, cex.axis=2.25, cex.lab=3.25)
+
+##Figure 4B
+boxplot(data=e, JaccardSim~StageGroup, xlab="Disease Stage Group", ylab="Jaccard Similarity Index Sputum-Saliva", xaxt="n", cex.axis=1.5, cex.lab=2.5, whisklty=1) 
+axis(side = 1,at = 1:2,labels=c("Early + Early/Int (n=15)","Int + Int/Adv + Adv (n=22)"), lwd.ticks = FALSE, cex.axis=2.25, cex.lab=3.25)
+
+##Figure 4C
+par(mar = c(7, 5, 5, 14), xpd=TRUE)
+f <- read.csv(file="DominantOTURelativeAbundance.csv",header=T)
+f$Type <- factor(f$Type, c("Sputum", "Saliva"))
+boxplot(data=f, MaxRA~Type*StageGroup, at=c(1,2,4,5), xaxt="n",xlab="", ylab="Max OTU Relative Abundance", cex.axis=2, cex.lab=2.5, col=c("white","grey","white","grey"), whisklty=1)
+text(1.5, 0.07, "Early + Early/Int (n=15)", cex=2.2)
+text(4.5, 0.07, "Int + Int/Adv + Adv (n=22)", cex=2.2)
+mtext("Disease Stage Group", side=1, line=4, cex=2.5)
+legend("right", inset = c(-0.24,0), fill = c("white","grey"), legend = c("Sputum", "Saliva"), title = "Specimen Type", cex=2)
+
+
+#Sputum in silico Decontamination
+
+##Figure 5
+decontam1<-read.table("Decontam_example1.csv",header=T,sep=",")
+dodge <- position_dodge(width = 0.5)
+legend.title = element_blank()
+plot1 <- ggplot(data=decontam1, aes(x=B, y=Load, fill=Sample)) +
+    geom_bar(stat="identity", position=dodge, width=0.5) +
+    scale_fill_brewer(palette="Paired") +
+facet_wrap(~OTU, nrow = 1, strip.position="bottom") +
+    theme(panel.spacing = unit(0, "lines"), axis.text.x=element_blank(), axis.ticks.x=element_blank(), strip.text.x=element_text(size=50), strip.background=element_rect(fill="white"), panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+scale_y_continuous(limits=c(0,50000000), expand=expand_scale(mult = c(0.01,0.02)), label= function(x) {ifelse(x==0, "0", parse(text=gsub("[+]", "", gsub("e", " %*% 10^", scientific_format()(x)))))} 
+) +
+ theme(axis.text=element_text(size=50, ), axis.title=element_text(size=48,face="bold"), legend.title=element_blank(), legend.text=element_text(size=65), legend.key.size = unit(2, "cm"), legend.text.align = 0, plot.margin=unit(c(1,0.8,1,1), "cm")) +
+    xlab("OTU") +
+    ylab("Bacterial Load (16S copies/ml)\n")
+plot1b <- plot1 + scale_fill_manual(values=c("blue", "lightblue"), labels=c(expression(AA[sal]), expression(AA[spu])))
+plot1b
+
+decontam2<-read.table("Decontam_example2.csv",header=T,sep=",")
+dodge <- position_dodge(width = 0.5)
+legend.title = element_blank()
+Sample2 <- relevel(decontam2$Sample, "AAsal")
+decontam2$Sample <- factor(decontam2$Sample, levels = c("AAsal", "Cc", "AAspu"))
+plot2 <- ggplot(data=decontam2, aes(B, y=Load, fill=Sample2)) +
+    geom_bar(stat="identity", width=1) +
+    facet_wrap(~OTU, nrow = 1, strip.position="bottom") +
+    theme(panel.spacing = unit(0, "lines"), axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(), strip.text.x=element_text(size=50), strip.background=element_rect(fill="white"), panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+    scale_fill_brewer(palette="Paired") +
+scale_y_continuous(limits=c(0,50000000), expand=expand_scale(mult = c(0.01,0.02)), label= function(x) {ifelse(x==0, "0", parse(text=gsub("[+]", "", gsub("e", " %*% 10^", scientific_format()(x)))))}) +
+    theme(axis.text=element_text(size=50), axis.title=element_text(size=48,face="bold"), legend.position="none", plot.margin=unit(c(1,0.8,1,1), "cm")) +
+    xlab("OTU") +
+    ylab("Bacterial Load (16S copies/ml)\n")
+plot2b <- plot2 + scale_fill_manual(values=c("blue", "lightblue", "orange"), labels=c(expression(AA[sal]), expression(C[C]), expression(AA[spu])))
+plot2b    
+###For legend in correct order:
+plot2c <- ggplot(data=decontam2, aes(B, y=Load, fill=Sample2)) +
+    geom_bar(stat="identity", width=1) +
+    facet_wrap(~OTU, nrow = 1, strip.position="bottom") +
+    theme(panel.spacing = unit(0, "lines"), axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(), strip.text.x=element_text(size=50), strip.background=element_rect(fill="white"), panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+    scale_fill_brewer(palette="Paired") +
+scale_y_continuous(limits=c(0,50000000), expand=expand_scale(mult = c(0.01,0.02)), label= function(x) {ifelse(x==0, "0", parse(text=gsub("[+]", "", gsub("e", " %*% 10^", scientific_format()(x)))))}) +
+    theme(axis.text=element_text(size=50), axis.title=element_text(size=48,face="bold"), legend.title=element_blank(), legend.text=element_text(size=65), legend.key.size = unit(2, "cm"), legend.text.align = 0, plot.margin=unit(c(1,0.8,1,1), "cm")) +
+    xlab("OTU") +
+    ylab("Bacterial Load (16S copies/ml)\n")
+plot2d <- plot2c + scale_fill_manual(values=c("lightblue", "orange", "blue"), labels=c(expression(AA[sal]), expression(C[C]), expression(AA[spu])))
+leg2 <- get_legend(plot2d)
+as_ggplot(leg2)
+
+decontam3<-read.table("Decontam_example3.csv",header=T,sep=",")
+dodge <- position_dodge(width = 0.5)
+legend.title = element_blank()
+Sample3 <- relevel(decontam3$Sample, "Cc")
+plot3 <- ggplot(data=decontam3, aes(B, y=Load, fill=Sample3)) +
+     geom_bar(stat="identity", width=1, color=c("blue", "black", "orange","blue", "black", "orange","blue", "black", "orange","blue", "black", "orange","blue", "black", "orange","blue", "black", "orange"), size=c(0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0)) +
+     facet_wrap(~OTU, nrow = 1, strip.position="bottom") +
+     theme(panel.spacing = unit(0, "lines"), axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(), strip.text.x=element_text(size=50), strip.background=element_rect(fill="white"), panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+     scale_fill_brewer(palette="Paired") +
+     scale_y_continuous(limits=c(0,50000000), expand=expand_scale(mult = c(0.01,0.02)), label= function(x) {ifelse(x==0, "0", parse(text=gsub("[+]", "", gsub("e", " %*% 10^", scientific_format()(x)))))}) +
+     theme(axis.text=element_text(size=50), axis.title=element_text(size=48,face="bold"), legend.title=element_blank(), legend.text=element_text(size=65), legend.key.size = unit(2, "cm"), legend.text.align = 0, plot.margin=unit(c(1,0.8,1,1), "cm")) +
+     xlab("OTU") +
+     ylab("Bacterial Load (16S copies/ml)\n")
+plot3B <- plot3 + scale_fill_manual(values=c("orange", "blue", "lightblue"), labels=c(expression(C[C]), expression(AA[sal]), expression(C[a]))) 
+plot3B
+###Border around Ca in legend needs to be added manually
+
+
+
+
+##Sputum in silico decontamination procedure
+dts1<-read.table("mothur.subsample_RA.shared",header=T,sep="\t")
+ddbl<-read.table("BacterialLoad.csv",header=T,sep=",")
+bl<-ddbl$Bacterial.load
+i=1
+Per_vol<-NULL
+Per_reads<-NULL
+DissimAA<-NULL
+DissimRA<-NULL
+for (i in 1:37){
+ddo<-cbind(dts1[,c(1:2)], dts1[,c(2*i+1,2*i+2)])#pairs sample
+colnames(ddo)[3] <- "Sputum"
+colnames(ddo)[4] <- "Saliva"
+dd<-subset(ddo,ddo$Saliva>=0.01)#At least>=1% relative abundance
+dd$Rank[order(-(dd[,4]))] <- 1:nrow(dd)
+dd<-dd[,c(1,2,3,4,5)]
+dd$Sputum_AA<-dd$Sputum*bl[2*i-1]
+dd$Saliva_AA<-dd$Saliva*bl[2*i]
+ddo$Sputum_AA<-ddo$Sputum*bl[2*i-1]
+ddo$Saliva_AA<-ddo$Saliva*bl[2*i]
+###Caculate maximal contamination
+Per<-min(dd$Sputum_AA/dd$Saliva_AA)
+###Per is the maximal volume contamination of saliva
+Per
+Per_vol<-rbind(Per_vol,Per)
+ddo$'Decontaminated sputum'<-ddo$Sputum_AA-Per*ddo$Saliva_AA
+ddo$'Decontaminated sputum'[ddo$'Decontaminated sputum'<0]<-0
+ddo$Contamination<-Per*ddo$Saliva_AA
+Perr<-sum(Per*ddo$Saliva_AA)/sum(ddo$Sputum_AA)
+###Perr indicates the percentage of sputum derived from saliva
+Per_reads<-rbind(Per_reads,Perr)
+ddo$decontam_RA<-ddo$'Decontaminated sputum'/sum(ddo$'Decontaminated sputum')
+rS_AA<-rbind(ddo$Sputum_AA,ddo$`Decontaminated sputum`)
+dS_AA<- as.matrix(designdist(rS_AA,method="1-(J/(A+B-J))", terms = c("quadratic"), abcd = FALSE))
+aa<-dS_AA[1,2]
+DissimAA<-rbind(DissimAA,aa)
+rS_RA<-rbind(ddo$Sputum,ddo$decontam_RA)
+dS_RA<- as.matrix(designdist(rS_RA,method="1-(J/(A+B-J))", terms = c("quadratic"), abcd = FALSE))
+ra<-dS_RA[1,2]
+DissimRA<-rbind(DissimRA,ra)
+i=i+1
+}
+Decontamination_matrix<-cbind(Per_vol,Per_reads,DissimAA,DissimRA)
+fn=paste("Decontamination_matrix",".csv",sep="")
+write.csv(Decontamination_matrix,fn,row.names=TRUE)
+####Matrix Col A = sputum samples in numerical order 1-37
+####Matrix Col B = Per_vol = maximal volume (mL) of contaminating saliva per 1 mL sputum
+####Matrix Col C = Per_reads = percentage of sputum reads derived from saliva
+####Matrix Col D = DissimAA = theta-YC dissimilarity based on Absolute abundance
+####Matrix Col E = DissimRA = theta-YC dissimilarity based on Relative abundance
+#####Matrix Col B is “Minimum Sputum AA/Saliva AA” (Col B in Table S2)
+#####"Contamination Constant" (Col C in Table S2) is equal to Matrix Col B, except when Matrix Col B > 1, in which case, the contamination constant = 1
+#####1-(Matrix Col D) = “Theta-YC Similarity” (Col D in Table S2)
+
+##Generate Distance Matrix for Original and Decontaminated Sputum
+###From mothur shared file (stability.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.opti_mcc.0.03.subsample.shared), calculate corrected (decontaminated) sputum:
+###Multiply absolute abundance (reads) for each OTU of each saliva sample by the contamination constant for that sample pair to yield the calculated contamination
+###For each OTU of each sputum sample, subtract the respective calculated contamintion from the absolute abundance (reads) of the sputum sample
+###Make new shared file with 37 original sputum samples and 37 decontaminated sputum samples, and technical replicates ("Decontaminated.csv")
+####Samples with _d suffix are post-decontamination
+###Remove 5 subjects with less than 5 sample pairs
+###Generate distance matrix: 
+Decontaminated <- read.csv("Decontaminated.csv", header=TRUE, row.names=1)
+###Generate theta-YC distance matrix
+Decontaminated_TYC <- designdist(Decontaminated, method="1-(J/(A+B-J))", terms = c( "quadratic"), abcd = FALSE)
+write.csv(as.matrix(Decontaminated_TYC), file = "Decontaminated_TYC.csv")
+Decontaminated_TYC_List <- dist2list(Decontaminated_TYC)
+write.csv(as.matrix(Decontaminated_TYC_List), file = "Decontaminated_TYC_List.csv")
+###copy distance matrix (“Decontaminated_TYC_List.csv”) to BBEdit
+###Enter number of samples in first row, delete other values
+###Save as: Decontaminated_TYC.dist
+###Run pcoa in mothur
+###Save pcoa output as decontaminated_pcoa_tyc.csv
+
+
+##Figure 6A
+mycols3 <- c("#486030","#C03018","#F0A800","#484878","#A8C018","#000000")
+palette(mycols3)
+g <- read.csv(file="decontaminated_pcoa_tyc.csv",header=T)
+par(mar = c(5, 5, 1, 1))
+plot(g$y~g$x, xlab="PCo1 (22.9%)", ylab="PCo2 (7.3%)", col=g[,5], pch=g[,4], xlim=c(-0.83,0.36), ylim=c(-0.30,0.79), cex=g[,6], cex.axis=1.5, cex.lab=1.5)
+legend(-0.05, 0.78, c("Original","After Decontamination","Technical Replicates"), pch=c(16,21,24), col=c("black","black","black"), cex = 1.5, pt.cex=c(3,3,1.5), bty="n")
+segments(-0.367177,0.672647,-0.393386,0.692094,lty=1)
+segments(-0.717903,-0.013033,-0.73233,-0.018087,lty=1)
+segments(-0.204853,0.576649,-0.218729,0.598051,lty=1)
+segments(-0.418415,0.586167,-0.419339,0.587132,lty=1)
+segments(-0.102033,0.330766,-0.101999,0.331018,lty=1)
+segments(0.082843,0.150987,0.103707,0.158209,lty=1)
+segments(0.125357,0.204286,0.127292,0.195576,lty=1)
+segments(0.039433,0.113214,-0.065379,0.185229,lty=1)
+segments(0.095517,0.230045,0.088398,0.222972,lty=1)
+segments(0.032199,0.233484,0.003478,0.228898,lty=1)
+segments(-0.678545,-0.17494,-0.682497,-0.17593,lty=1)
+segments(-0.682188,-0.175041,-0.686513,-0.177192,lty=1)
+segments(-0.689612,-0.174542,-0.689612,-0.174542,lty=1)
+segments(-0.652168,-0.185725,-0.661477,-0.188032,lty=1)
+segments(-0.698663,-0.160467,-0.699681,-0.160837,lty=1)
+segments(-0.386871,-0.147526,-0.569332,-0.201819,lty=1)
+segments(-0.425638,-0.140123,-0.552943,-0.17031,lty=1)
+segments(-0.348735,-0.118521,-0.348735,-0.118521,lty=1)
+segments(-0.379904,-0.130342,-0.462212,-0.164516,lty=1)
+segments(-0.401668,-0.119035,-0.401668,-0.119035,lty=1)
+segments(0.198572,-0.008325,0.235882,-0.047911,lty=1)
+segments(0.248158,-0.044757,0.263244,-0.062401,lty=1)
+segments(0.239964,-0.046721,0.257823,-0.113352,lty=1)
+segments(0.179533,-0.015719,0.179533,-0.015719,lty=1)
+segments(0.207494,0.002476,0.240316,-0.089766,lty=1)
+text(-0.3,0.5, "Subject 1",cex=1.7,col=1)
+text(0.0632845,0.28, "Subject 2",cex=1.7,col=2)
+text(-0.73,-0.25, "Subject 3",cex=1.7,col=3)
+text(-0.4277706,-0.062, "Subject 4",cex=1.7,col=4)
+text(0.2250519,0.05, "Subject 5",cex=1.7,col=5)
+text(0.01, -0.07, "Technical Replicates", cex=1.4, col=6)
+
+##Figure 6B
+g1 <- subset(g, Subject == 1, select = c("Group", "x", "y", "Treatment", "Subject"))
+g2 <- subset(g, Subject == 2, select = c("Group", "x", "y", "Treatment", "Subject"))
+g3 <- subset(g, Subject == 3, select = c("Group", "x", "y", "Treatment", "Subject"))
+g4 <- subset(g, Subject == 4, select = c("Group", "x", "y", "Treatment", "Subject"))
+g5 <- subset(g, Subject == 5, select = c("Group", "x", "y", "Treatment", "Subject"))
+gGD <- subset(g, Subject == 6, select = c("Group", "x", "y", "Treatment", "Subject"))
+par(mfrow = c(3,2))
+par(mar=c(5,5,4,3), xpd=TRUE)
+plot(g1$y~g1$x, xlab="PCo1 (22.9%)", ylab="PCo2 (7.3%)", pch= g1[,4], xlim=c(-0.81,-0.045), ylim=c(-0.11,0.76), main="Subject 1", cex.main = 2.5, cex=3, cex.axis=1.5, cex.lab=1.5)
+segments(-0.367177,0.672647,-0.393386,0.692094,lty=1)
+segments(-0.717903,-0.013033,-0.73233,-0.018087,lty=1)
+segments(-0.204853,0.576649,-0.218729,0.598051,lty=1)
+segments(-0.418415,0.586167,-0.419339,0.587132,lty=1)
+segments(-0.102033,0.330766,-0.101999,0.331018,lty=1)
+plot(g2$y~g2$x, xlab="PCo1 (22.9%)", ylab="PCo2 (7.3%)", pch= g2[,4], xlim=c(-0.08,0.14), ylim=c(0.09,0.25), main="Subject 2", cex.main = 2.5, cex=3, cex.axis=1.5, cex.lab=1.5)
+segments(0.082843,0.150987,0.103707,0.158209,lty=1)
+segments(0.125357,0.204286,0.127292,0.195576,lty=1)
+segments(0.039433,0.113214,-0.065379,0.185229,lty=1)
+segments(0.095517,0.230045,0.088398,0.222972,lty=1)
+segments(0.032199,0.233484,0.003478,0.228898,lty=1)
+plot(g3$y~g3$x, xlab="PCo1 (22.9%)", ylab="PCo2 (7.3%)", pch= g3[,4], xlim=c(-0.71,-0.645), ylim=c(-0.195,-0.15), main="Subject 3", cex.main = 2.5, cex=3, cex.axis=1.5, cex.lab=1.5)
+segments(-0.678545,-0.17494,-0.682497,-0.17593,lty=1)
+segments(-0.682188,-0.175041,-0.686513,-0.177192,lty=1)
+segments(-0.689612,-0.174542,-0.689612,-0.174542,lty=1)
+segments(-0.652168,-0.185725,-0.661477,-0.188032,lty=1)
+segments(-0.698663,-0.160467,-0.699681,-0.160837,lty=1)
+plot(g4$y~g4$x, xlab="PCo1 (22.9%)", ylab="PCo2 (7.3%)", pch= g4[,4], xlim=c(-0.6,-0.32), ylim=c(-0.22,-0.1), main="Subject 4", cex.main = 2.5, cex=3, cex.axis=1.5, cex.lab=1.5)
+segments(-0.386871,-0.147526,-0.569332,-0.201819,lty=1)
+segments(-0.425638,-0.140123,-0.552943,-0.17031,lty=1)
+segments(-0.348735,-0.118521,-0.348735,-0.118521,lty=1)
+segments(-0.379904,-0.130342,-0.462212,-0.164516,lty=1)
+segments(-0.401668,-0.119035,-0.401668,-0.119035,lty=1)
+plot(g5$y~g5$x, xlab="PCo1 (22.9%)", ylab="PCo2 (7.3%)", pch= g5[,4], xlim=c(0.17,0.27), ylim=c(-0.13,0.02), main="Subject 5", cex.main = 2.5, cex=3, cex.axis=1.5, cex.lab=1.5)
+segments(0.198572,-0.008325,0.235882,-0.047911,lty=1)
+segments(0.248158,-0.044757,0.263244,-0.062401,lty=1)
+segments(0.239964,-0.046721,0.257823,-0.113352,lty=1)
+segments(0.179533,-0.015719,0.179533,-0.015719,lty=1)
+segments(0.207494,0.002476,0.240316,-0.089766,lty=1)
+plot(gGD$y~gGD$x, xlab="PCo1 (22.9%)", ylab="PCo2 (7.3%)", pch= gGD[,4], xlim=c(0.165,0.235), ylim=c(-0.11,0), main="Technical Replicates", cex.main = 2.5, cex=2, cex.axis=1.5, cex.lab=1.5)
+
+##Sputum in silico Decontamination Linear Mixed Model
+h <- read.csv(file="DecontaminationLMM.csv")
+lmm <- lmer(TYC_Before_After_Decontamination ~ StageGroup + SputumSimpson + SputumLoad + Treatment + (1|Subject), data = h)
+anova(lmm)
+
+

@@ -40,7 +40,6 @@ p <- ggplot(a, aes(x = SpecimenType, y = Load)) +
 p + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
 panel.background = element_rect(fill = "white", color = "black", size = 1, linetype = "solid"))
 
-
 ##Figure 1B
 b <- read.csv(file="Figure1B.csv",header=T)
 b$SubjectSample <- factor(b$SubjectSample, c("10c",	"10b",	"10a",	"9c",	"9b",	"9a",	"8c",	"8b",	"8a",	"7b",	"7a",	"6",	"5e",	"5d",	"5c",	"5b",	"5a",	"4e",	"4d",	"4c",	"4b",	"4a",	"3e",	"3d",	"3c",	"3b",	"3a",	"2e",	"2d",	"2c",	"2b",	"2a",	"1e",	"1d",	"1c",	"1b",	"1a", "1f"))
@@ -83,7 +82,6 @@ ggplot(data=b, aes(x=SubjectSample,y=SputumSalivaRatio-1,fill=factor(SalivaIsHig
     annotate("text", x=20, y=0.62, size=5, label="T") +
     annotate("text", x=5, y=0.34, size=5, label="T")
 
-
 ##Figure 1C
 par(mar = c(5, 7, 5, 2), xpd=TRUE)
 a$StageGroup <- factor(a$StageGroup, levels = c("1","2"))
@@ -100,18 +98,18 @@ p <- ggplot(a, aes(x = StageGroup, y = Load)) +
 p + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
 panel.background = element_rect(fill = "white", color = "black", size = 1, linetype = "solid"))
 
-
 ##Bacterial Load Linear Mixed Model
 lmm <- lmer(LogLoad ~ StageGroup + Treatment + SpecimenType + Treatment:SpecimenType + (1|Subject), data = a)
 anova(lmm)
 
+
 #Richness
+
 ##Figure 2A
 par(mar = c(5, 7, 5, 2), xpd=TRUE)
 c <-read.csv(file="Richness.csv",header=T)
 c$SpecimenType <- factor(c$SpecimenType, levels=c("Sputum", "Saliva"))
-boxplot(data=c, Richness~SpecimenType, xlab="Specimen Type", ylab="Richness (number of OTUs)", names = c("Sputum","Saliva"), cex.axis=2, cex.lab=2.75, whisklty=1) 
-
+boxplot(data=c, Richness~SpecimenType, xlab="Specimen Type", ylab="Richness (number of OTUs)", names = c("Sputum","Saliva"), cex.axis=2, cex.lab=2.75, whisklty=1, outcex=1.5, outlwd=2) 
 
 ##Figure 2B
 d <- read.csv(file="Figure2B.csv",header=T)
@@ -157,11 +155,9 @@ ggplot(data=d, aes(x=SubjectSample,y=SputumSalivaDifference,fill=factor(SalivaIs
     annotate("text", x=21.1, y=0, size=7, label="|", fontface="bold") +
     annotate("text", x=4.1, y=0, size=7, label="|", fontface="bold")
 
-
 ##Figure 2C
 par(mar = c(5, 5, 5, 2), xpd=TRUE)
-boxplot(data=c, Richness~StageGroup, xlab="Disease Stage Group", ylab="Richness (number of OTUs)", names = c("Early + Early/Int","Int + Int/Adv + Adv"), cex.axis=2, cex.lab=2.75, whisklty=1) 
-
+boxplot(data=c, Richness~StageGroup, xlab="Disease Stage Group", ylab="Richness (number of OTUs)", names = c("Early + Early/Int","Int + Int/Adv + Adv"), cex.axis=2, cex.lab=2.75, whisklty=1, outcex=1.5, outlwd=2) 
 
 ##Richness Linear Mixed Model
 lmm <- lmer(Richness ~ StageGroup + Treatment + SpecimenType + (1|Subject), data = c)
@@ -264,7 +260,6 @@ p8
 p9
 p10
 
-
 ##Figure 4A
 par(mar = c(7, 5, 5, 2))
 e <- read.csv(file="BetaDiversity.csv",header=T)
@@ -272,18 +267,18 @@ boxplot(data=e, TYC_Similarity~StageGroup, xlab="Disease Stage Group", ylab="The
 axis(side = 1,at = 1:2,labels=c("Early + Early/Int (n=15)","Int + Int/Adv + Adv (n=22)"), lwd.ticks = FALSE, cex.axis=2.25, cex.lab=3.25)
 
 ##Figure 4B
-boxplot(data=e, JaccardSim~StageGroup, xlab="Disease Stage Group", ylab="Jaccard Similarity Index Sputum-Saliva", xaxt="n", cex.axis=1.5, cex.lab=2.5, whisklty=1) 
+boxplot(data=e, JaccardSim~StageGroup, xlab="Disease Stage Group", ylab="Jaccard Similarity Index Sputum-Saliva", xaxt="n", cex.axis=1.5, cex.lab=2.5, whisklty=1, outcex=1.5, outlwd=2) 
 axis(side = 1,at = 1:2,labels=c("Early + Early/Int (n=15)","Int + Int/Adv + Adv (n=22)"), lwd.ticks = FALSE, cex.axis=2.25, cex.lab=3.25)
 
 ##Figure 4C
 par(mar = c(7, 5, 5, 14), xpd=TRUE)
 f <- read.csv(file="DominantOTURelativeAbundance.csv",header=T)
 f$Type <- factor(f$Type, c("Sputum", "Saliva"))
-boxplot(data=f, MaxRA~Type*StageGroup, at=c(1,2,4,5), xaxt="n",xlab="", ylab="Max OTU Relative Abundance", cex.axis=2, cex.lab=2.5, col=c("white","grey","white","grey"), whisklty=1)
+boxplot(data=f, MaxRA~Type*StageGroup, at=c(1,2,4,5), xaxt="n",xlab="", ylab="Max OTU Relative Abundance", cex.axis=2, cex.lab=2.5, col=c("white","grey","white","grey"), whisklty=1, outcex=1.5, outlwd=2)
 text(1.5, 0.07, "Early + Early/Int (n=15)", cex=2.2)
 text(4.5, 0.07, "Int + Int/Adv + Adv (n=22)", cex=2.2)
 mtext("Disease Stage Group", side=1, line=4, cex=2.5)
-legend("right", inset = c(-0.24,0), fill = c("white","grey"), legend = c("Sputum", "Saliva"), title = "Specimen Type", cex=2)
+legend("right", inset = c(-0.2,0), fill = c("white","grey"), legend = c("Sputum", "Saliva"), title = "Specimen Type", cex=2)
 
 
 #Sputum in silico Decontamination
@@ -354,8 +349,6 @@ plot3 <- ggplot(data=decontam3, aes(B, y=Load, fill=Sample3)) +
 plot3B <- plot3 + scale_fill_manual(values=c("orange", "blue", "lightblue"), labels=c(expression(C[C]), expression(AA[sal]), expression(C[a]))) 
 plot3B
 ###Border around Ca in legend needs to be added manually
-
-
 
 
 ##Sputum in silico decontamination procedure
@@ -431,7 +424,6 @@ write.csv(as.matrix(Decontaminated_TYC_List), file = "Decontaminated_TYC_List.cs
 ###Save as: Decontaminated_TYC.dist
 ###Run pcoa in mothur
 ###Save pcoa output as decontaminated_pcoa_tyc.csv
-
 
 ##Figure 6A
 mycols3 <- c("#486030","#C03018","#F0A800","#484878","#A8C018","#000000")

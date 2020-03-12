@@ -23,8 +23,8 @@ mothur > make.shared(list=stability.trim.contigs.good.unique.good.filter.unique.
 mothur > sub.sample(shared=stability.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.opti_mcc.shared)
 mothur > get.relabund(shared=stability.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.opti_mcc.0.03.subsample.shared)
 mothur > summary.shared(shared=stability.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.opti_mcc.shared, label=0.03, calc=jclass-thetayc, subsample=T)
-mothur > pcoa(phylip=Decontaminated121619_TYC.dist)
-mothur > amova(phylip=Decontaminated121619_TYC.dist, design=Decontamination121619.design)
+mothur > pcoa(phylip=Decontaminated_TYC.dist)
+mothur > amova(phylip=Decontaminated_TYC.dist, design=Decontamination.design)
 mothur > summary.single(shared=stability.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.opti_mcc.0.03.subsample.shared, calc=sobs-invsimpson)
 
 

@@ -1,4 +1,4 @@
-mothur v.1.41.3
+#mothur v.1.41.3
 mothur > make.contigs(file=stability.files, processors=8)
 mothur > summary.seqs(fasta=stability.trim.contigs.fasta)
 mothur > screen.seqs(fasta=stability.trim.contigs.fasta, group=stability.contigs.groups, maxambig=0, maxlength=275)

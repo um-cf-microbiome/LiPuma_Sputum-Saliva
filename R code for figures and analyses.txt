@@ -50,7 +50,7 @@ ggplot(data=b, aes(x=SubjectSample,y=SputumSalivaRatio-1,fill=factor(SalivaIsHig
     theme(axis.text.y=element_blank(), panel.grid.major.y = element_blank(),   
           axis.text=element_text(size=15), axis.title.x = element_text(size = 25), axis.title.y = 
               element_text(size = 25), plot.margin=margin(t = 25, r = 5, b = 20, l = 10)) +
-    ylab("(log10 Sputum Load) / (log10 Saliva Load)") +
+    ylab("log10 Sputum Load / log10 Saliva Load") +
     xlab("Subject") +     
     geom_segment(aes(x=3.5, y=-0.4, xend=3.5, yend=.65), size=0.1) +       
     geom_segment(aes(x=6.5, y=-0.4, xend=6.5, yend=.65), size=0.02) +     
@@ -71,8 +71,8 @@ ggplot(data=b, aes(x=SubjectSample,y=SputumSalivaRatio-1,fill=factor(SalivaIsHig
     annotate("text", x=25, y=-0.42, size = 7, label="3") +
     annotate("text", x=30, y=-0.42, size = 7, label="2") +
     annotate("text", x=35, y=-0.42, size = 7, label="1") + 
-    annotate("text", x=38, y=-0.2, size=5, label="(Higher Load in Saliva)") +
-    annotate("text", x=38, y=0.3, size=5, label="(Higher Load in Sputum)") +
+    annotate("text", x=38, y=-0.2, size=5, label="Higher Load in Saliva") +
+    annotate("text", x=38, y=0.3, size=5, label="Higher Load in Sputum") +
     annotate("text", x=33, y=-0.05, size=5, label="T") +
     annotate("text", x=30, y=0.115, size=5, label="T") +
     annotate("text", x=29, y=0.04, size=5, label="T") +
@@ -120,7 +120,7 @@ ggplot(data=d, aes(x=SubjectSample,y=SputumSalivaDifference,fill=factor(SalivaIs
     theme(axis.text.y=element_blank(), panel.grid.major.y = element_blank(),   
           axis.text=element_text(size=15), axis.title.x = element_text(size = 25), axis.title.y = 
               element_text(size = 25), plot.margin=margin(t = 25, r = 5, b = 20, l = 10)) +
-    ylab("(Sputum Richness) – (Saliva Richness)") +
+    ylab("Sputum Richness – Saliva Richness") +
     xlab("Subject") +     
     ylim(-41, 20) +
     geom_segment(aes(x=3.5, y=-39.5, xend=3.5, yend=19.5), size=0.1) +       
@@ -142,8 +142,8 @@ ggplot(data=d, aes(x=SubjectSample,y=SputumSalivaDifference,fill=factor(SalivaIs
     annotate("text", x=25, y=-41, size = 7, label="3") +
     annotate("text", x=30, y=-41, size = 7, label="2") +
     annotate("text", x=35, y=-41, size = 7, label="1") + 
-    annotate("text", x=38, y=-25, size=5, label="(Excess Taxa in Saliva)") +
-    annotate("text", x=38, y=10, size=5, label="(Excess Taxa in Sputum)") +
+    annotate("text", x=38, y=-25, size=5, label="Excess Taxa in Saliva") +
+    annotate("text", x=38, y=10, size=5, label="Excess Taxa in Sputum") +
     annotate("text", x=33, y=5, size=5, label="T") +
     annotate("text", x=30, y=2, size=5, label="T") +
     annotate("text", x=29, y=-13, size=5, label="T") +

@@ -107,7 +107,10 @@ anova(lmm)
 par(mar = c(5, 7, 5, 2), xpd=TRUE)
 c <-read.csv(file="Richness.csv",header=T)
 c$SpecimenType <- factor(c$SpecimenType, levels=c("Sputum", "Saliva"))
-boxplot(data=c, Richness~SpecimenType, xlab="Specimen Type", ylab="Richness (number of OTUs)", names = c("Sputum","Saliva"), cex.axis=2, cex.lab=2.75, whisklty=1, outcex=1.5, outlwd=2) 
+boxplot(data=c, Richness~SpecimenType, xlab="Specimen Type", ylab="Richness (number of OTUs)", names = c("Sputum","Saliva"), cex.axis=1.5, cex.lab=2.25, ylim=c(0,144), whisklty=1, outcex=1.5, outlwd=2) 
+clip(1,2,0,144)
+abline(h=139)
+text(1.5, 142, "*", cex=3)
 
 ##Figure 2B
 d <- read.csv(file="Figure2B.csv",header=T)
@@ -261,8 +264,11 @@ p10
 ##Figure 4A
 par(mar = c(7, 5, 5, 2))
 e <- read.csv(file="BetaDiversity.csv",header=T)
-boxplot(data=e, TYC_Similarity~StageGroup, xlab="Disease Stage Group", ylab="Theta-YC Similarity Sputum-Saliva", xaxt="n", cex.axis=1.5, cex.lab=2.5, whisklty=1) 
-axis(side = 1,at = 1:2,labels=c("Early + Early/Int (n=15)","Int + Int/Adv + Adv (n=22)"), lwd.ticks = FALSE, cex.axis=2.25, cex.lab=3.25)
+boxplot(data=e, TYC_Similarity~StageGroup, xlab="Disease Stage Group", ylab="Theta-YC Similarity Sputum-Saliva", xaxt="n", cex.axis=1.5, cex.lab=2, ylim=c(0,1.12), whisklty=1) 
+axis(side = 1,at = 1:2,labels=c("Early + Early/Int (n=15)","Int + Int/Adv + Adv (n=22)"), lwd.ticks = FALSE, cex.axis=1.75, cex.lab=2.75)
+clip(1,2,0,1.12)
+abline(h=1.07)
+text(1.5, 1.09, "**", cex=3)
 
 ##Figure 4B
 boxplot(data=e, JaccardSim~StageGroup, xlab="Disease Stage Group", ylab="Jaccard Similarity Index Sputum-Saliva", xaxt="n", cex.axis=1.5, cex.lab=2.5, whisklty=1, outcex=1.5, outlwd=2) 
@@ -272,11 +278,15 @@ axis(side = 1,at = 1:2,labels=c("Early + Early/Int (n=15)","Int + Int/Adv + Adv 
 par(mar = c(7, 5, 5, 14), xpd=TRUE)
 f <- read.csv(file="DominantOTURelativeAbundance.csv",header=T)
 f$Type <- factor(f$Type, c("Sputum", "Saliva"))
-boxplot(data=f, MaxRA~Type*StageGroup, at=c(1,2,4,5), xaxt="n",xlab="", ylab="Max OTU Relative Abundance", cex.axis=2, cex.lab=2.5, col=c("white","grey","white","grey"), whisklty=1, outcex=1.5, outlwd=2)
-text(1.5, 0.07, "Early + Early/Int (n=15)", cex=2.2)
-text(4.5, 0.07, "Int + Int/Adv + Adv (n=22)", cex=2.2)
-mtext("Disease Stage Group", side=1, line=4, cex=2.5)
-legend("right", inset = c(-0.2,0), fill = c("white","grey"), legend = c("Sputum", "Saliva"), title = "Specimen Type", cex=2)
+boxplot(data=f, MaxRA~Type*StageGroup, at=c(1,2,4,5), xaxt="n",xlab="", ylab="Max OTU Relative Abundance", cex.axis=1.75, cex.lab=2.25, col=c("white","grey","white","grey"), ylim=c(0.1,1.02), whisklty=1, outcex=1.5, outlwd=2)
+text(1.5, 0.02, "Early + Early/Int (n=15)", cex=1.75)
+text(4.5, 0.02, "Int + Int/Adv + Adv (n=22)", cex=1.75)
+mtext("Disease Stage Group", side=1, line=4, cex=2.25)
+legend("right", inset = c(-0.35,0), fill = c("white","grey"), legend = c("Sputum", "Saliva"), title = "Specimen Type", cex=2)
+clip(4,5,0,1.12)
+abline(h=1.0)
+text(4.5, 1.02, "***", cex=3)
+
 
 
 #Sputum in silico Decontamination

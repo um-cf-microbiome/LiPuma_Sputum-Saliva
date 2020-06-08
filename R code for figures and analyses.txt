@@ -34,7 +34,7 @@ p <- ggplot(a, aes(x = SpecimenType, y = Load)) +
      stat_summary(fun.y=mean, geom="point", shape=20, size=6,    
      color="black", fill="black") +
      xlab("Specimen Type") +
-     ylab("Bacterial Load (16S copies/ml)")
+     ylab("Bacterial Load (16S copies/mL)")
 p + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
 panel.background = element_rect(fill = "white", color = "black", size = 1, linetype = "solid"))
 
@@ -91,7 +91,7 @@ p <- ggplot(a, aes(x = StageGroup, y = Load)) +
      stat_summary(fun.y=mean, geom="point", shape=20, size=6,    
      color="black", fill="black") +
      xlab("\nDisease Stage Group") +
-     ylab("Bacterial Load (16S copies/ml)") +
+     ylab("Bacterial Load (16S copies/mL)") +
       scale_x_discrete(labels=c("Early + Early/Int","Int + Int/Adv + Adv"))
 p + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
 panel.background = element_rect(fill = "white", color = "black", size = 1, linetype = "solid"))

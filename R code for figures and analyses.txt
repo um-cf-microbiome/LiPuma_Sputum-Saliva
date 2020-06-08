@@ -304,7 +304,7 @@ scale_y_continuous(limits=c(0,50000000), expand=expand_scale(mult = c(0.01,0.02)
 ) +
  theme(axis.text=element_text(size=50, ), axis.title=element_text(size=48,face="bold"), legend.title=element_blank(), legend.text=element_text(size=65), legend.key.size = unit(2, "cm"), legend.text.align = 0, plot.margin=unit(c(1,0.8,1,1), "cm")) +
     xlab("OTU") +
-    ylab("Bacterial Load (16S copies/ml)\n")
+    ylab("Bacterial Load (16S copies/mL)\n")
 plot1b <- plot1 + scale_fill_manual(values=c("blue", "lightblue"), labels=c(expression(AA[sal]), expression(AA[spu])))
 plot1b
 
@@ -322,7 +322,7 @@ plot2 <- ggplot(data=decontam2, aes(B, y=Load, fill=Sample2)) +
 scale_y_continuous(limits=c(0,50000000), expand=expand_scale(mult = c(0.01,0.02)), label= function(x) {ifelse(x==0, "0", parse(text=gsub("[+]", "", gsub("e", " %*% 10^", scientific_format()(x)))))}) +
     theme(axis.text=element_text(size=50), axis.title=element_text(size=48,face="bold"), legend.position="none", plot.margin=unit(c(1,0.8,1,1), "cm")) +
     xlab("OTU") +
-    ylab("Bacterial Load (16S copies/ml)\n")
+    ylab("Bacterial Load (16S copies/mL)\n")
 plot2b <- plot2 + scale_fill_manual(values=c("blue", "lightblue", "orange"), labels=c(expression(AA[sal]), expression(C[C]), expression(AA[spu])))
 plot2b    
 ###For legend in correct order:
@@ -335,7 +335,7 @@ plot2c <- ggplot(data=decontam2, aes(B, y=Load, fill=Sample2)) +
 scale_y_continuous(limits=c(0,50000000), expand=expand_scale(mult = c(0.01,0.02)), label= function(x) {ifelse(x==0, "0", parse(text=gsub("[+]", "", gsub("e", " %*% 10^", scientific_format()(x)))))}) +
     theme(axis.text=element_text(size=50), axis.title=element_text(size=48,face="bold"), legend.title=element_blank(), legend.text=element_text(size=65), legend.key.size = unit(2, "cm"), legend.text.align = 0, plot.margin=unit(c(1,0.8,1,1), "cm")) +
     xlab("OTU") +
-    ylab("Bacterial Load (16S copies/ml)\n")
+    ylab("Bacterial Load (16S copies/mL)\n")
 plot2d <- plot2c + scale_fill_manual(values=c("lightblue", "orange", "blue"), labels=c(expression(AA[sal]), expression(C[C]), expression(AA[spu])))
 leg2 <- get_legend(plot2d)
 as_ggplot(leg2)
@@ -353,7 +353,7 @@ plot3 <- ggplot(data=decontam3, aes(B, y=Load, fill=Sample3)) +
      scale_y_continuous(limits=c(0,50000000), expand=expand_scale(mult = c(0.01,0.02)), label= function(x) {ifelse(x==0, "0", parse(text=gsub("[+]", "", gsub("e", " %*% 10^", scientific_format()(x)))))}) +
      theme(axis.text=element_text(size=50), axis.title=element_text(size=48,face="bold"), legend.title=element_blank(), legend.text=element_text(size=65), legend.key.size = unit(2, "cm"), legend.text.align = 0, plot.margin=unit(c(1,0.8,1,1), "cm")) +
      xlab("OTU") +
-     ylab("Bacterial Load (16S copies/ml)\n")
+     ylab("Bacterial Load (16S copies/mL)\n")
 plot3B <- plot3 + scale_fill_manual(values=c("orange", "blue", "lightblue"), labels=c(expression(C[C]), expression(AA[sal]), expression(C[a]))) 
 plot3B
 ###Border around Ca in legend needs to be added manually

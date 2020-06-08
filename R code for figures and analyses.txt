@@ -2,11 +2,11 @@
 install.packages("stringi",dep=TRUE)
 library(ggplot2)
 library(scales)
-library(lme4)
-library(lmerTest)
 library(vegan)
 library(grid)
 library(zoo)
+library(lme4)
+library(lmerTest)
 library(reshape2)
 library(reshape)
 library(dplyr)
@@ -286,6 +286,12 @@ legend("right", inset = c(-0.35,0), fill = c("white","grey"), legend = c("Sputum
 clip(4,5,0,1.12)
 abline(h=1.0)
 text(4.5, 1.02, "***", cex=3)
+
+##Community Structure t-tests
+t.test(TYC_Similarity~StageGroup, var.equal=TRUE, data=e)
+t.test(JaccardSim~StageGroup, var.equal=TRUE, data=e)
+t.test(MaxRA~Type, paired=TRUE, data=subset(f, f$StageGroup==1))
+t.test(MaxRA~Type, paired=TRUE, data=subset(f, f$StageGroup==2))
 
 
 

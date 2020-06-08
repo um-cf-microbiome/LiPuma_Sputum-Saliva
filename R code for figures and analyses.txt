@@ -525,3 +525,8 @@ lmm <- lmer(TYC_Before_After_Decontamination ~ StageGroup + SputumSimpson + Sput
 anova(lmm)
 
 
+#Antibiotic Treatment
+i <- read.csv(file="AntibioticTreatment.csv")
+t.test(TYC_Similarity~TreatmentGroup, var.equal=TRUE, data=i)
+t.test(JaccardSim~TreatmentGroup, var.equal=TRUE, data=i)
+

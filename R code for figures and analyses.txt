@@ -23,7 +23,7 @@ require("ggrepel")
 ###Figure 1A
 par(mar = c(5, 7, 5, 2), xpd=TRUE)
 a <- read.csv(file="ddPCR.csv",header=T)
-####Load is 16S copies/ml sample, calculated as (ColH*100*(685/400)*(695/650)*(1000/175))
+####Load is 16S copies/mL sample, calculated as (ColH*100*(685/400)*(695/650)*(1000/175))
 ####Treatment 1=on antibiotic treatment, 2=off antibiotic treatment
 a$SpecimenType <- factor(a$SpecimenType, levels = c("Sputum", "Saliva"))
 p <- ggplot(a, aes(x = SpecimenType, y = Load)) +
